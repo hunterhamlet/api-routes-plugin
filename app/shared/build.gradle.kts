@@ -6,6 +6,12 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    id("com.hamon.apiroutes")
+}
+
+apiRoutes {
+    tomlFile.set(rootProject.layout.projectDirectory.file("api.toml"))
+    outputPackage.set("com.hamon.kmp_save_api.app.routes")
 }
 
 kotlin {
@@ -49,6 +55,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
+            implementation(libs.ktor.kmp.android)
         }
         commonMain.dependencies {
             api(projects.core)
@@ -60,12 +67,24 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.ktor.kmp.core)
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        jvmMain.dependencies {
+            implementation(libs.ktor.kmp.cio)
+        }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
+            implementation(libs.ktor.kmp.js)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.kmp.js)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.kmp.darwin)
         }
     }
 }

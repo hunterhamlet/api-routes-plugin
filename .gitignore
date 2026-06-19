@@ -17,3 +17,10 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# API config local (usar api.example.toml como referencia)
+api.toml

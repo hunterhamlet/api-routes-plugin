@@ -6,17 +6,17 @@ import kotlin.test.Test
 class ApiRoutesPluginFunctionalTest {
 
     @Test
-    fun `plugin generates ApiRoutes kt for JVM project`() = TODO("T6")
+    fun `plugin generates ApiRoutes kt for JVM project`(): Unit = TODO("T6")
 
     @Test
-    fun `plugin generates ApiRoutes kt for KMP project`() = TODO("T6")
+    fun `plugin generates ApiRoutes kt for KMP project`(): Unit = TODO("T6")
 
     @Test
-    fun `generated file compiles successfully`() = TODO("T6")
+    fun `generated file compiles successfully`(): Unit = TODO("T6")
 
     @Test
-    fun `task is up to date on second run`() = TODO("T6")
+    fun `task is up to date on second run`(): Unit = TODO("T6")
 
     @Test
-    fun `task re-runs when toml file changes`() = TODO("T6")
+    fun `task re-runs when toml file changes`(): Unit = TODO("T6")
 }

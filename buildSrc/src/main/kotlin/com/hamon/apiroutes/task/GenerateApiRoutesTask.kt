@@ -25,5 +25,5 @@ abstract class GenerateApiRoutesTask : DefaultTask() {
     abstract val versionPosition: Property<String>
 
     @TaskAction
-    fun generate() = TODO("T6")
+    fun generate(): Unit = TODO("T6")
 }

@@ -1,0 +1,109 @@
+# api.example.toml
+#
+# Plantilla de configuración para el plugin api-routes.
+# Copia este archivo como "api.toml" (ignorado por git) y ajusta los valores.
+#
+# El plugin lee api.toml y genera un objeto Kotlin tipado (ApiRoutes) en tiempo
+# de compilación. La baseUrl NO va aquí — viene de BuildKonfig/BuildConfig según
+# la plataforma. Este archivo solo define la estructura de rutas.
+#
+# Patrón de acceso generado:
+#   ApiRoutes.Sales.V1.UserDetail.route          → "/v1/sales/users/{userId}"
+#   ApiRoutes.Sales.V1.UserDetail.Params.userId  → "userId"
+#   ApiRoutes.Sales.V1.UserDetail.path           → "/users/{userId}"
+#
+# Jerarquía generada según combinación:
+#   tenant + version  →  ApiRoutes.Tenant.Version.Route
+#   tenant only       →  ApiRoutes.Tenant.Route
+#   version only      →  ApiRoutes.Version.Route
+#   ninguno           →  ApiRoutes.Route
+
+# ── 1. params ────────────────────────────────────────────────────────────────
+# Nombres de parámetros de path reutilizables.
+# Se referencian con param.ref = "key" en [routes].
+# El generador los convierte a /{paramName} al ensamblar el path.
+#
+[params]
+user-id  = "userId"
+order-id = "orderId"
+store-id = "storeId"
+
+# ── 2. paths ─────────────────────────────────────────────────────────────────
+# Segmentos de path reutilizables (sin parámetros).
+# Se referencian con path.ref = "key" en [routes] o [tenants].
+#
+[paths]
+users  = "/users"
+orders = "/orders"
+stores = "/stores"
+
+# ── 3. versions ──────────────────────────────────────────────────────────────
+# Versiones de la API.
+# Se referencian con version.ref = "key" en [routes].
+# La posición de la versión en el .route final se controla con
+# versionPosition en el bloque apiRoutes {} del build.gradle.kts:
+#   BEFORE_TENANT  →  /v1/sales/users  (default, más común)
+#   AFTER_TENANT   →  /sales/v1/users
+#   NONE           →  versión manejada externamente
+#
+[versions]
+v1 = "/v1"
+v2 = "/v2"
+
+# ── 4. tenants ───────────────────────────────────────────────────────────────
+# Agrupadores lógicos de rutas (dominio funcional, microservicio, etc.).
+# El path del tenant es el prefijo de todas sus rutas.
+# Opcional: las rutas pueden existir sin tenant.
+#
+[tenants]
+sales    = { path = "/sales" }
+payments = { path = "/payments" }
+
+# ── 5. routes ────────────────────────────────────────────────────────────────
+# Definición flat de todas las rutas. El generador construye la jerarquía
+# y calcula .path y .route a partir de las refs resueltas.
+#
+# Campos disponibles por ruta:
+#   tenant.ref  = "key"   → referencia a [tenants]       (opcional)
+#   version.ref = "key"   → referencia a [versions]      (opcional)
+#   parent.ref  = "key"   → referencia a otra [route]    (opcional, para sub-rutas)
+#   path.ref    = "key"   → referencia a [paths]         (opcional)
+#   path        = "/..."  → path inline                  (opcional, alternativa a path.ref)
+#   param.ref   = "key"   → referencia a [params]        (opcional)
+#
+# Formas válidas:
+#   ruta-simple  = "/health"                               ← string puro (shorthand)
+#   ruta-tabla   = { tenant.ref = "sales", path = "/x" }  ← tabla con refs
+#
+# Reglas:
+#   - path y path.ref son mutuamente excluyentes
+#   - parent.ref hereda tenant y version del padre (no es necesario redeclararlos)
+#   - Los ciclos en parent.ref son un error de compilación
+#   - Los nombres se convierten a PascalCase: get-last-sale → GetLastSale
+#
+[routes]
+
+# Ruta suelta — sin tenant, sin version
+health = "/health"
+
+# Con version, sin tenant
+api-status = { version.ref = "v1", path = "/status" }
+
+# Con tenant, sin version
+last-sale = { tenant.ref = "sales", path = "/last-sale" }
+
+# Con tenant y version, path desde [paths] + param desde [params]
+# Genera: ApiRoutes.Sales.V1.UserDetail.route = "/v1/sales/users/{userId}"
+user-detail = { tenant.ref = "sales", version.ref = "v1", path.ref = "users", param.ref = "user-id" }
+
+# Sub-ruta via parent.ref — hereda tenant y version de user-detail
+# Genera: ApiRoutes.Sales.V1.UserDetail.UserOrders.route = "/v1/sales/users/{userId}/orders"
+user-orders = { parent.ref = "user-detail", path.ref = "orders" }
+
+# Sub-sub-ruta — solo agrega el param, hereda todo lo demás
+# Genera: ApiRoutes.Sales.V1.UserDetail.UserOrders.OrderDetail.route = "/v1/sales/users/{userId}/orders/{orderId}"
+order-detail = { parent.ref = "user-orders", param.ref = "order-id" }
+
+# Rutas de payments — path inline
+sales-offer   = { tenant.ref = "payments", version.ref = "v2", path = "/sales-offer" }
+purchase-cart = { tenant.ref = "payments", version.ref = "v2", path = "/purchase-cart" }

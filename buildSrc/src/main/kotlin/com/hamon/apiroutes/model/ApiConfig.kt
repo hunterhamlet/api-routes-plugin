@@ -18,12 +18,3 @@ data class RouteDef(
     val pathInline: String? = null,
     val paramRef: String? = null,
 )
-
-data class ResolvedRoute(
-    val key: String,
-    val tenantPath: String?,
-    val versionPath: String?,
-    val parentKey: String?,
-    val ownPath: String,
-    val accumulatedParams: List<String>,
-)

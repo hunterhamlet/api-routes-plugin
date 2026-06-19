@@ -12,8 +12,8 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation("com.akuleshov7:ktoml-core:0.5.5")
-    implementation("com.squareup:kotlinpoet:1.18.1")
+    implementation("com.akuleshov7:ktoml-core:0.7.0")
+    implementation("com.squareup:kotlinpoet:2.2.0")
     testImplementation(kotlin("test"))
     testImplementation(gradleTestKit())
 }

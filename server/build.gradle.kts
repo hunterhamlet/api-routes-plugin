@@ -15,6 +15,14 @@ apiRoutes {
     outputPackage.set("com.hamon.kmp_save_api.server.routes")
 }
 
+tasks.register<JavaExec>("rickAndMortyDemo") {
+    group = "demo"
+    description = "Demuestra ApiRoutes en acción: llama a rickandmortyapi.com con constantes generadas desde api.toml"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.hamon.kmp_save_api.RickAndMortyDemoKt")
+    dependsOn("compileKotlin")
+}
+
 dependencies {
     api(projects.core)
     implementation(libs.logback)

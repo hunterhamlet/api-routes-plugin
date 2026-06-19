@@ -32,6 +32,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+include(":api-routes")
 include(":app:androidApp")
 include(":app:desktopApp")
 include(":app:shared")
